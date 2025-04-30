@@ -2,7 +2,7 @@
 NAME = so_long
 
 # Compiler and Flags
-CC = gcc
+CC = cc
 # Add Include paths for headers (-I), Wall/Wextra/Werror for warnings
 CFLAGS = -Wall -Wextra -Werror -I$(LIBFT_DIR) -I$(MLX_DIR) #-g # Uncomment -g for debugging
 

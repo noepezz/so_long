@@ -36,7 +36,6 @@ void	*load_single_image(t_map *map, char *path)
 // Loads player-specific images
 void	load_player_images(t_map *map)
 {
-	// Define paths - Adjust these to your actual asset locations
 	map->img.player_right1 = load_single_image(map, "assets/right.xpm");
 	map->img.player_right2 = load_single_image(map, "assets/right_2.xpm");
 	map->img.player_left1 = load_single_image(map, "assets/left.xpm");
@@ -55,9 +54,6 @@ void	load_game_images(t_map *map)
 	map->img.wall = load_single_image(map, "assets/wall.xpm");
 	map->img.exit = load_single_image(map, "assets/exit.xpm");
 	map->img.collectible = load_single_image(map, "assets/star.xpm");
-
-	load_player_images(map); // Load all player sprites
-
-	// Set the initial player sprite (e.g., facing down)
+	load_player_images(map);
 	map->img.current_player = map->img.player_down1;
 }

@@ -84,35 +84,27 @@ void	read_map_file(t_map *map)
 	while ((line = get_next_line(fd)) != NULL)
 	{
 		if (current_y >= map->y) { free(line); break; } // Safety break
-
-		// Trim the newline BEFORE duplicating
 		trim_newline(line);
-
-		// Now duplicate the line *without* the newline
 		map->array[current_y] = ft_strdup(line);
 		map->copy[current_y] = ft_strdup(line);
-
-		// Check for allocation failure after strdup
 		if (!map->array[current_y] || !map->copy[current_y])
 		{
-			free(line); // Free the original line from GNL
-			map->array[current_y] = NULL; // Ensure null termination
+			free(line);
+			map->array[current_y] = NULL;
 			map->copy[current_y] = NULL;
 			close(fd);
-			free_map_arrays(map); // Use helper to free both arrays
+			free_map_arrays(map);
 			exit_with_error(map, "Memory allocation failed duplicating map line.");
 		}
-		free(line); // Free the original line from GNL *after* processing
+		free(line);
 		current_y++;
 	}
-	map->array[current_y] = NULL; // Null-terminate the arrays
+	map->array[current_y] = NULL;
 	map->copy[current_y] = NULL;
 	close(fd);
-
-	// Final check: Did we read the expected number of lines?
 	if (current_y != map->y)
 	{
-		free_map_arrays(map); // Free partially read arrays
+		free_map_arrays(map);
 		exit_with_error(map, "Map read error/mismatch on second pass.");
 	}
 }
@@ -120,41 +112,28 @@ void	read_map_file(t_map *map)
 // Recursive flood-fill for path checking (operates on map->copy)
 void	flood_fill_path(int x, int y, t_map *map)
 {
-	// Base cases: Check boundaries and obstacles/visited cells in the copy
+
 	if (y < 0 || y >= map->y || x < 0 || x >= map->x
 		|| map->copy[y][x] == WALL || map->copy[y][x] == VISITED)
 		return ;
-
-	// Process current cell based on its type in the copy
 	if (map->copy[y][x] == COLLECTIBLE)
-		map->c_check -= 1; // Found a collectible
+		map->c_check -= 1;
 	else if (map->copy[y][x] == EXIT)
-	{
-		map->e_check -= 1; // Found the exit
-		// Note: Don't return here, allow flood fill to continue
-		// to check reachability of collectibles potentially "behind" exit
-	}
-
-	// Mark the current cell as visited in the copy
+		map->e_check -= 1;
 	map->copy[y][x] = VISITED;
-
-	// Recursive calls for neighbors (4 directions)
-	flood_fill_path(x + 1, y, map); // Right
-	flood_fill_path(x - 1, y, map); // Left
-	flood_fill_path(x, y + 1, map); // Down
-	flood_fill_path(x, y - 1, map); // Up
+	flood_fill_path(x + 1, y, map);
+	flood_fill_path(x - 1, y, map);
+	flood_fill_path(x, y + 1, map);
+	flood_fill_path(x, y - 1, map);
 }
 
 // Orchestrates all map validation checks
 void	validate_map(t_map *map)
 {
-	check_filename_ext(map);    // Check .ber extension
-
-	read_map_file(map);         // Read into map->array and map->copy
-
-	check_map_dimensions(map);  // Check rectangular, min size, set map->x
-	check_map_params(map);      // Check chars, count P/E/C
-	check_map_walls(map);       // Check surrounding walls
-	check_map_path(map);        // Check path validity using flood fill
-								// Frees map->copy if path is valid
+	check_filename_ext(map);
+	read_map_file(map);
+	check_map_dimensions(map);
+	check_map_params(map);
+	check_map_walls(map);
+	check_map_path(map);
 }
